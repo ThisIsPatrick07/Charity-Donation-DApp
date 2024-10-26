@@ -45,16 +45,22 @@ describe("Charity", function (){
 
 		it("Registers the Beneficiary", async () => {
 			expect(await charity.numberOfBeneficiaries()).to.be.equal(1);
-			const beneficiaryDetails = await charity.beneficiaries(0);
+			const { 
+				name, 
+				beneficiaryAddress,
+				targetAmount,
+				collectedAmount,
+				currentAmount,
+			} = await charity.beneficiaries(0);
 			
-			expect(beneficiaryDetails.name).to.be.equal(BENEFICIARY_NAME);
-			expect(beneficiaryDetails.beneficiaryAddress).to.be.equal(beneficiary.address);
+			expect(name).to.be.equal(BENEFICIARY_NAME);
+			expect(beneficiaryAddress).to.be.equal(beneficiary.address);
 
 			// apparently we need to convert it to 256 bit integer again to compare it with solidity's own uint256
-			expect(beneficiaryDetails.targetAmount).to.equal(tokens(TARGET_AMOUNT));
+			expect(targetAmount).to.equal(tokens(TARGET_AMOUNT));
 			
-			expect(beneficiaryDetails.collectedAmount).to.be.equal(0);
-			expect(beneficiaryDetails.currentAmount).to.be.equal(0);
+			expect(collectedAmount).to.be.equal(0);
+			expect(currentAmount).to.be.equal(0);
 		});
 
 		it("Registers the Donator", async () => {
