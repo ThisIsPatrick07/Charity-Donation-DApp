@@ -40,10 +40,11 @@ contract Charity{
     address payable public owner;
 	string public name; // name of the charity
 
+	event DebugLog(string message);
+
     uint public numberOfBeneficiaries;
     uint public numberOfDonators;
     uint public totalCollection;
-
     
     mapping(uint => Beneficiary) public beneficiaries; // all the beneficiaries
     mapping(uint => Donator) public donators; // all the donators
@@ -69,7 +70,7 @@ contract Charity{
         Of course, that doesn't mean that the beneficiary is removed immediately after the target amount is
         collected. There can indeed be more donators who want to donate and that amount can still be transferred.
     */
-    function donate(uint _beneficiaryId) public payable{
+    function donate(uint _beneficiaryId) external payable{
 
         bool registered = isDonator[msg.sender].exists; // must be registered as a donator
         bool idInRange = (_beneficiaryId < numberOfBeneficiaries);
@@ -91,8 +92,7 @@ contract Charity{
 
         // in case target money has been reached or exceeded, initiate withdrawal of money for the beneficiary
         if(beneficiary.currentAmount >= beneficiary.targetAmount){
-            withdraw(_beneficiaryId, beneficiary.targetAmount);
-            beneficiary.currentAmount -= beneficiary.targetAmount;
+            withdraw(_beneficiaryId, beneficiary.currentAmount); // clear out the entire amount from the contract, send it to the beneficiary
         }
 
         totalCollection += msg.value;
@@ -111,7 +111,7 @@ contract Charity{
         Beneficiary memory newBeneficiary = Beneficiary({
             name: _name,
             beneficiaryAddress: _beneficiaryAddress,
-            targetAmount: (_targetAmount * 1 ether),
+            targetAmount: _targetAmount,
             collectedAmount: 0,
             currentAmount: 0
         });
@@ -152,13 +152,14 @@ contract Charity{
         Start a withdrawal transaction for the beneficiary, i.e. transfer the money from the contract
         to the beneficiary.
     */
-    function withdraw(uint _beneficiaryId, uint amount) internal {
+    function withdraw(uint _beneficiaryId, uint amount) public {
         // get the address of the beneficiary
-        address payable _beneficiaryAddress = beneficiaries[_beneficiaryId].beneficiaryAddress;
+		Beneficiary storage beneficiary = beneficiaries[_beneficiaryId];
+		address payable _beneficiaryAddress = payable(beneficiary.beneficiaryAddress);
 
         // transfer the amount
-        _beneficiaryAddress.transfer(amount);
-
-        return;
+        (bool success, ) = _beneficiaryAddress.call{ value : amount }("");		
+		require(success, "Transfer failed!");
+		beneficiary.currentAmount = 0;
     }
 }
