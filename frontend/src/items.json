@@ -1,0 +1,21 @@
+{
+	"charityName" : "De Dana DAAN",
+	"donators": [
+		{
+			"name" : "Bob"
+		},
+		{
+			"name" : "Damian"
+		}
+	],
+	"beneficiaries" : [
+		{
+			"name": "Alice",
+			"targetAmount" : 4
+		},
+		{
+			"name" : "Charlie",
+			"targetAmount" : 3
+		}
+	]
+}
