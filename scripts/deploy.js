@@ -42,7 +42,7 @@ async function registerAllDonators(donators, donatorSigners, charityContract){
 	for(let { name } of donators){		
 		transaction = await charityContract.connect(donatorSigners[i]).registerDonator(name);
 		await transaction.wait();
-		
+
 		i++;
 	}
 }
