@@ -2,18 +2,22 @@
 	"charityName" : "De Dana DAAN",
 	"donators": [
 		{
+			"id" : 1,
 			"name" : "Bob"
 		},
 		{
+			"id" : 2,
 			"name" : "Damian"
 		}
 	],
 	"beneficiaries" : [
 		{
+			"id" : 1,
 			"name": "Alice",
 			"targetAmount" : 4
 		},
 		{
+			"id" : 2,
 			"name" : "Charlie",
 			"targetAmount" : 3
 		}

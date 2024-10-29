@@ -51,7 +51,8 @@ describe("Charity", function (){
 
 		it("Registers the Beneficiary", async () => {
 			expect(await charity.numberOfBeneficiaries()).to.be.equal(1);
-			const { 
+			const {
+				id,
 				name, 
 				beneficiaryAddress,
 				targetAmount,
@@ -59,6 +60,7 @@ describe("Charity", function (){
 				currentAmount,
 			} = await charity.beneficiaries(0);
 			
+			expect(id).to.be.equal(0);
 			expect(name).to.be.equal(BENEFICIARY_NAME);
 			expect(beneficiaryAddress).to.be.equal(beneficiary.address);
 
@@ -76,10 +78,15 @@ describe("Charity", function (){
 		
 		it("Registers the Donator", async () => {
 			expect(await charity.numberOfDonators()).to.be.equal(1);
-			const donatorAddress = await charity.donators(0);
+			const {
+				id,
+				name,
+				donatorAddress,
+			} = await charity.donators(0);
 			
-			expect(donatorAddress.name).to.be.equal(DONATOR_NAME);
-			expect(donatorAddress.donatorAddress).to.be.equal(donator.address);
+			expect(id).to.be.equal(0);
+			expect(name).to.be.equal(DONATOR_NAME);
+			expect(donatorAddress).to.be.equal(donator.address);
 			
 			// check if the donator is registered or not
 			const result = await charity.isDonator(donator.address);
@@ -143,8 +150,6 @@ describe("Charity", function (){
 
 				transaction = await charity.connect(donator).donate(0, { value : EQUAL_DONATION_AMT });
 				receipt = await transaction.wait();
-
-				// await charity.connect(deployer).withdraw(0, EQUAL_DONATION_AMT);
 			});
 
 			it("Enables donator to donate", async () => {
@@ -199,13 +204,15 @@ describe("Charity", function (){
 			
 			// STEP 3
 			it("Sends the money to the beneficiary", async () => {
-				const { collectedAmount, currentAmount } = await charity.beneficiaries(0);
+				const { targetAmount, collectedAmount, currentAmount } = await charity.beneficiaries(0);
 				
 				beneficiaryAfterAmt = await ethers.provider.getBalance(beneficiary.address)
 				expect(beneficiaryAfterAmt).to.be.greaterThan(beneficiaryBeforeAmt);
 
 				expect(collectedAmount).to.be.equal(OVER_DONATION_AMT);
+				// expect(currentAmount).to.be.equal(OVER_DONATION_AMT % targetAmount);
 				expect(currentAmount).to.be.equal(0); // since the entire amt was flushed out of the contract, we have essentially reset
+				
 				// the current collection for the next round of donation
 
 				expect(await charity.amtForEachBeneficiary(0)).to.be.equal(OVER_DONATION_AMT);

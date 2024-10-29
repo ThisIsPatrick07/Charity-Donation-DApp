@@ -12,12 +12,14 @@ pragma solidity ^0.8.27;
 
 contract Charity{
     struct Donator{
+		uint id;
         string name;
         address donatorAddress;
         uint[] donatedTo;
     }
 
     struct Beneficiary{
+		uint id;
         string name;
         address payable beneficiaryAddress;
         uint targetAmount; // the amount of money the beneficiary wishes to collect
@@ -107,16 +109,18 @@ contract Charity{
         // get beneficiary address
         address payable _beneficiaryAddress = payable(address(msg.sender));
 
+        uint _beneficiaryId = numberOfBeneficiaries++;
+
         // create new beneficiary 
         Beneficiary memory newBeneficiary = Beneficiary({
-            name: _name,
+            id: _beneficiaryId,
+			name: _name,
             beneficiaryAddress: _beneficiaryAddress,
             targetAmount: _targetAmount,
             collectedAmount: 0,
             currentAmount: 0
         });
 
-        uint _beneficiaryId = numberOfBeneficiaries++;
         // add new beneficiary
         beneficiaries[_beneficiaryId] = newBeneficiary;
         isBeneficiary[_beneficiaryId] = true;
@@ -131,6 +135,7 @@ contract Charity{
 
         // Create the new Donator directly in storage
         donators[_donatorId] = Donator({
+			id: _donatorId,
             name: _name,
             donatorAddress: _donatorAddress,
             donatedTo: new uint[](0)

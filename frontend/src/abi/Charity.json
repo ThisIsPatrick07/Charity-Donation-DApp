@@ -53,6 +53,11 @@
 		"name": "beneficiaries",
 		"outputs": [
 			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
 				"internalType": "string",
 				"name": "name",
 				"type": "string"
@@ -104,6 +109,11 @@
 		],
 		"name": "donators",
 		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
 			{
 				"internalType": "string",
 				"name": "name",
